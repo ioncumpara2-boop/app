@@ -1,29 +1,47 @@
 import logo from './logo.svg';
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
+  const [adLoaded, setAdLoaded] = useState(false);
 
-  // Dacă vrei, poți încărca scriptul Monetag dinamic (opțional)
+  // Încarcă script-ul Monetag
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = "https://example.monetag.com/script.js"; // înlocuiește cu URL-ul real
+    script.src = "https://example.monetag.com/script.js"; // Înlocuiește cu URL-ul real
     script.async = true;
+
+    // Când script-ul e încărcat, setăm adLoaded = true
+    script.onload = () => {
+      console.log("Monetag script loaded");
+      setAdLoaded(true);
+    };
+
+    script.onerror = () => {
+      console.error("Failed to load Monetag script");
+    };
+
     document.body.appendChild(script);
+
+    // Curățare script la unmount (opțional)
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   const handleShowAd = () => {
-    if (window.show_10055544) {
+    if (adLoaded && window.show_10055544) {
       window.show_10055544('pop')
         .then(() => {
-          // aici pui logica de recompensă
+          // Codul pentru recompensă
           alert("Felicitări! Ai câștigat recompensa!");
         })
         .catch((e) => {
           console.error("Eroare la afișarea ad-ului:", e);
         });
     } else {
-      console.error("Script-ul Monetag nu e încă încărcat");
+      console.error("Ad-ul nu e încă disponibil. Încearcă din nou peste câteva secunde.");
+      alert("Ad-ul nu e încă disponibil. Încearcă din nou peste câteva secunde.");
     }
   };
 
@@ -44,8 +62,8 @@ function App() {
         </a>
 
         {/* Buton pentru rewarded ad */}
-        <button 
-          onClick={handleShowAd} 
+        <button
+          onClick={handleShowAd}
           style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}
         >
           Watch Ad
