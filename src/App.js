@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Salut
+          Lasa-ma in pace
         </a>
       </header>
     </div>
